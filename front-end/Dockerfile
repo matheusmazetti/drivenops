@@ -1,6 +1,6 @@
 FROM node:16
 
-WORKDIR /build
+WORKDIR /app
 
 COPY . .
 
@@ -14,4 +14,4 @@ RUN mv build/* /var/www/html
 
 WORKDIR /
 
-RUN rm -rf /build
+RUN rm -rf /app
