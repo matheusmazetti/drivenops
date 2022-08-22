@@ -6,3 +6,42 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    timeout-minutes: 20
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: create backend .env
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_POSTGRES_USER: "postgres"
+          envkey_POSTGRES_PASSWORD: "postgres"
+          envkey_POSTGRES_DB: "students"
+          envkey_DATABASE_URL: "postgres://postgres:postgres@db:5432/students"
+          directory: back-end/
+          file_name: .env
+          fail_on_empty: true
+
+      - name: create frontend .env
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_REACT_APP_BASE_URL: http://ec2-44-210-144-104.compute-1.amazonaws.com/api
+          directory: front-env/
+          file_name: .env
+          fail_on_empty: true
+
+      - name: create root .env
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_POSTGRES_USER: "postgres"
+          envkey_POSTGRES_PASSWORD: "postgres"
+          envkey_POSTGRES_DB: "students"
+          envkey_DATABASE_URL: "postgres://postgres:postgres@db:5432/students"
+          file_name: .env
+          fail_on_empty: true
+
+      - name: Build
+        run: docker-compose build
+
+      - name: Deploy
+        run: docker-compose down && docker-compose up -d
